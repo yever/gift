@@ -16,22 +16,22 @@ named!(version<&[u8], GIFVersion>, map_res!(alt!(tag!("87a") | tag!("89a")), get
 named!(
     gif<&[u8], GIF>,
     do_parse!(
-                     signature >>
-    v:               version   >>
-    width:           le_u16    >>
-    height:          le_u16    >>
-    packed_field:    take!(1)  >>
-    bg_color_index:  take!(1)  >>
-    px_aspect_ratio: take!(1)  >>
-    global_c_table:  cond!(
+                             signature >>
+    version:                 version   >>
+    width:                   le_u16    >>
+    height:                  le_u16    >>
+    packed_field:            take!(1)  >>
+    background_color_index:  take!(1)  >>
+    pixel_aspect_ratio:      take!(1)  >>
+    global_color_table:      cond!(
         packed_field[0] & 0x80 != 0,
         take!(3 * (1 << ((packed_field[0] & 0b_0000_0111) + 1)))
-                     )         >>
+                             )         >>
     (GIF {
-        version: v,
+        version: version,
         width: width,
         height: height,
-        global_color_table: global_c_table
+        global_color_table: global_color_table
     }))
 );
 

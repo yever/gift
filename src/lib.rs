@@ -8,10 +8,11 @@ pub enum GIFVersion {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub struct GIF {
+pub struct GIF<'a> {
     pub version: GIFVersion,
     pub width: u16,
     pub height: u16,
+    global_color_table: Option<&'a [u8]>,
 }
 
 pub mod parser;

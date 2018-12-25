@@ -16,14 +16,22 @@ named!(version<&[u8], GIFVersion>, map_res!(alt!(tag!("87a") | tag!("89a")), get
 named!(
     gif<&[u8], GIF>,
     do_parse!(
-            signature  >>
-    v:      version    >>
-    width:  le_u16     >>
-    height: le_u16     >>
+                     signature >>
+    v:               version   >>
+    width:           le_u16    >>
+    height:          le_u16    >>
+    packed_field:    take!(1)  >>
+    bg_color_index:  take!(1)  >>
+    px_aspect_ratio: take!(1)  >>
+    global_c_table:  cond!(
+        packed_field[0] & 0x80 != 0,
+        take!(3 * (1 << ((packed_field[0] & 0b_0000_0111) + 1)))
+                     )         >>
     (GIF {
         version: v,
         width: width,
-        height: height
+        height: height,
+        global_color_table: global_c_table
     }))
 );
 
@@ -75,11 +83,18 @@ mod tests {
 
     #[test]
     fn should_parse_gif() {
-        let gif_data = include_bytes!("../fixtures/GifSample.gif");
-        assert_eq!(parse_gif(gif_data), Ok(GIF {
-            version: GIFVersion::GIF89a,
-            width: 32,
-            height: 52,
-        }));
+        let gif_data = include_bytes!("../fixtures/sample_1.gif");
+        assert_eq!(
+            parse_gif(gif_data),
+            Ok(GIF {
+                version: GIFVersion::GIF89a,
+                width: 10,
+                height: 10,
+                global_color_table: Some(
+                    &[0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00][..]
+                )
+            })
+        );
     }
+
 }

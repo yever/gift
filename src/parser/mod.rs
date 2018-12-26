@@ -85,6 +85,34 @@ named!(graphic_block<&[u8], Block>,
        )
 );
 
+named!(plain_text_block<&[u8], Block>,
+       do_parse!(
+           graphic_control_extension: opt!(graphic_control_extension) >>
+                                      tag!([0x21, 0x01])              >>
+           text:                      data_subblocks                  >>
+           (Block::TextBlock {
+               graphic_control_extension: graphic_control_extension,
+               text: text
+           })
+       )
+);
+
+named!(application_extension<&[u8], Block>,
+       do_parse!(
+                 tag!([0x21, 0xff]) >>
+           data: data_subblocks     >>
+           (Block::ApplicationExtension(data))
+       )
+);
+
+named!(comment_extension<&[u8], Block>,
+       do_parse!(
+                 tag!([0x21, 0xfe]) >>
+           data: data_subblocks     >>
+           (Block::CommentExtension(data))
+       )
+);
+
 named!(gif<&[u8], GIF>,
        do_parse!(
                                     tag!("GIF") >>

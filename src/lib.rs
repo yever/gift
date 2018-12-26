@@ -41,6 +41,12 @@ pub enum Block<'a> {
         local_color_table: Option<&'a [u8]>,
         image_data: ImageData<'a>,
     },
+    TextBlock {
+        graphic_control_extension: Option<GraphicControlExtension>,
+        text: SubBlocks<'a>,
+    },
+    ApplicationExtension(SubBlocks<'a>),
+    CommentExtension(SubBlocks<'a>),
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]

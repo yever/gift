@@ -8,3 +8,4 @@ cache:
 
 before_cache:
   - rm -rf /home/travis/.cargo/registry
+

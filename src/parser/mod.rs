@@ -1,4 +1,6 @@
 mod subblocks;
+
+#[cfg(test)]
 mod tests;
 
 use self::subblocks::data_subblocks;

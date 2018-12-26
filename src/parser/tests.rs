@@ -1,4 +1,7 @@
-use super::*;
+use super::{
+    graphic_block, graphic_control_extension, image_data, image_descriptor, parse_gif, version,
+    Block, GIFVersion, GraphicControlExtension, ImageData, ImageDescriptor, SubBlocks, GIF,
+};
 use nom::{Context::Code, Err::Error, ErrorKind};
 
 #[test]

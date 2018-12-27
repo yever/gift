@@ -35,12 +35,15 @@ pub struct ImageData<'a> {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Block<'a> {
+    // Graphic Block with Graphic-Rendering Block
     GraphicBlock {
         graphic_control_extension: Option<GraphicControlExtension>,
+        // Table-Based Image:
         image_descriptor: ImageDescriptor,
         local_color_table: Option<&'a [u8]>,
         image_data: ImageData<'a>,
     },
+    // Graphic Block with Plain Text Extension
     TextBlock {
         graphic_control_extension: Option<GraphicControlExtension>,
         text: SubBlocks<'a>,
@@ -49,12 +52,13 @@ pub enum Block<'a> {
     CommentExtension(SubBlocks<'a>),
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct GIF<'a> {
     pub version: GIFVersion,
     pub width: u16,
     pub height: u16,
     global_color_table: Option<&'a [u8]>,
+    data: Vec<Block<'a>>
 }
 
 pub mod parser;

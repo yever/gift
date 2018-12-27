@@ -113,6 +113,8 @@ named!(comment_extension<&[u8], Block>,
        )
 );
 
+named!(data<&[u8], Block>, alt!(graphic_block | plain_text_block | application_extension | comment_extension));
+
 named!(gif<&[u8], GIF>,
        do_parse!(
                                     tag!("GIF") >>
@@ -126,11 +128,13 @@ named!(gif<&[u8], GIF>,
                packed_field & 0b_1000_0000 != 0,
                take!(3 * (1 << ((packed_field & 0b_0000_0111) + 1)))
                                     )           >>
+           data:                   many0!(data) >>          
            (GIF {
                version: version,
                width: width,
                height: height,
-               global_color_table: global_color_table
+               global_color_table: global_color_table,
+               data: data,
            })
        )
 );

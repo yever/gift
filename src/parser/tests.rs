@@ -1,6 +1,7 @@
 use super::{
-    graphic_block, graphic_control_extension, image_data, image_descriptor, parse_gif, version,
-    Block, GIFVersion, GraphicControlExtension, ImageData, ImageDescriptor, SubBlocks, GIF,
+    application_extension, comment_extension, graphic_block, graphic_control_extension, image_data,
+    image_descriptor, parse_gif, plain_text_block, version, Block, GIFVersion,
+    GraphicControlExtension, ImageData, ImageDescriptor, SubBlocks, GIF,
 };
 use nom::{Context::Code, Err::Error, ErrorKind};
 
@@ -133,6 +134,47 @@ fn should_parse_graphic_block() {
                 }
             }
         ))
+    );
+}
+
+#[test]
+fn should_parse_plain_text_block() {
+    let data = [
+        0x21, 0x01, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x64, 0x00, 0x64, 0x00, 0x14, 0x14, 0x01, 0x00,
+        0x0B, 0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x00,
+    ];
+    assert_eq!(
+        plain_text_block(&data[..]),
+        Ok((
+            &[][..],
+            Block::TextBlock {
+                graphic_control_extension: None,
+                text: SubBlocks(&data[2..])
+            }
+        ))
+    );
+}
+
+#[test]
+fn should_parse_application_extension() {
+    let data = [
+        0x21, 0xFF, 0x0B, 0x4E, 0x45, 0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2E, 0x30, 0x03,
+        0x01, 0x05, 0x00, 0x00,
+    ];
+    assert_eq!(
+        application_extension(&data[..]),
+        Ok((&[][..], Block::ApplicationExtension(SubBlocks(&data[2..]))))
+    );
+}
+
+#[test]
+fn should_parse_comment_extension() {
+    let data = [
+        0x21, 0xFE, 0x09, 0x62, 0x6C, 0x75, 0x65, 0x62, 0x65, 0x72, 0x72, 0x79, 0x00,
+    ];
+    assert_eq!(
+        comment_extension(&data[..]),
+        Ok((&[][..], Block::CommentExtension(SubBlocks(&data[2..]))))
     );
 }
 

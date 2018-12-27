@@ -1,38 +1,55 @@
 #[macro_use]
 extern crate nom;
 
+/// Part of the Header. Supported versions are "87a" and "89a".
+///
+/// See the GIF89a spec §17
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum GIFVersion {
     GIF89a,
     GIF87a,
 }
 
+/// See the GIF89a spec §23
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct GraphicControlExtension {
-    byte_size: u8,
-    packed_field: u8,
-    delay_time: u16,
-    transparent_color_index: u8,
+    pub byte_size: u8,
+    pub packed_field: u8,
+    pub delay_time: u16,
+    pub transparent_color_index: u8,
 }
 
+/// A required block of the Table-Based Image containing the description of an image.
+///
+/// See the GIF89a spec §20
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct ImageDescriptor {
-    left: u16,
-    top: u16,
-    width: u16,
-    height: u16,
-    packed_field: u8,
+    pub left: u16,
+    pub top: u16,
+    pub width: u16,
+    pub height: u16,
+    pub packed_field: u8,
 }
 
+/// A collections of sub-blocks, each one preceded by a u8 byte denoting its size and terminated by
+/// a zero-sized sub-block (block terminator).
+///
+/// See the GIF89a spec §15-16
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub struct SubBlocks<'a>(&'a [u8]);
+pub struct SubBlocks<'a>(pub &'a [u8]);
 
+/// Table Based Image Data. 
+///
+/// See the GIF89a spec §22
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct ImageData<'a> {
-    lzw_minimum_code_size: u8,
-    data: SubBlocks<'a>,
+    pub lzw_minimum_code_size: u8,
+    pub data: SubBlocks<'a>,
 }
 
+/// The various data blocks that comprise the content of a GIF.
+///
+/// See the GIF89a spec §12 and Appendix B.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Block<'a> {
     // Graphic Block with Graphic-Rendering Block
@@ -52,13 +69,16 @@ pub enum Block<'a> {
     CommentExtension(SubBlocks<'a>),
 }
 
+/// The full structure of a GIF.
+///
+/// See Appendix B.
 #[derive(Debug, PartialEq, Eq)]
 pub struct GIF<'a> {
     pub version: GIFVersion,
     pub width: u16,
     pub height: u16,
-    global_color_table: Option<&'a [u8]>,
-    data: Vec<Block<'a>>
+    pub global_color_table: Option<&'a [u8]>,
+    pub data: Vec<Block<'a>>,
 }
 
 pub mod parser;

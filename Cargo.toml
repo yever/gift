@@ -1,5 +1,5 @@
 [package]
-name = "gifst"
+name = "gift"
 version = "0.1.0"
 authors = ["Ya'ar Hever <yaarhever@gmail.com>"]
 edition = "2018"

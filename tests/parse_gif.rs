@@ -1,5 +1,5 @@
-extern crate gifst;
-use gifst::{parse_gif, GIFVersion, GIF, Block, GraphicControlExtension, ImageDescriptor, SubBlocks, ImageData};
+extern crate gift;
+use gift::{parse_gif, GIFVersion, GIF, Block, GraphicControlExtension, ImageDescriptor, SubBlocks, ImageData};
 
 #[test]
 fn should_parse_sample_1_gif() {

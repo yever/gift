@@ -1,6 +1,5 @@
 use super::{
     subblocks::data_subblocks, Block, GraphicControlExtension, ImageData, ImageDescriptor,
-    SubBlocks,
 };
 use nom::{le_u16, le_u8};
 
@@ -101,6 +100,7 @@ named!(pub block<&[u8], Block>, alt!(graphic_block | plain_text_block | applicat
 
 #[cfg(test)]
 mod tests {
+    use super::super::SubBlocks;
     use super::*;
 
     #[test]

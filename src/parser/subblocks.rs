@@ -1,10 +1,5 @@
 use super::SubBlocks;
-use nom::{
-    le_u8,
-    Context::Code,
-    Err::{Error, Incomplete},
-    ErrorKind, IResult, Needed,
-};
+use nom::{le_u8, Context::Code, Err::Error, ErrorKind, IResult};
 use std::iter::{IntoIterator, Iterator};
 
 fn non_empty_subblock(input: &[u8]) -> IResult<&[u8], &[u8]> {
@@ -76,6 +71,7 @@ impl<'a> IntoIterator for SubBlocks<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use nom::{Err::Incomplete, Needed};
 
     #[test]
     fn should_parse_non_empty_subblock() {

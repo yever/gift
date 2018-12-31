@@ -1,7 +1,7 @@
 mod subblocks;
 mod blocks;
 
-use super::{
+use super::model::{
     Block, GraphicControlExtension, ImageData, ImageDescriptor, SubBlocks, GIF,
     GIFVersion
 };
